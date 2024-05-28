@@ -1,4 +1,4 @@
-import { Actor, CollisionType, Color, Engine, Font, Text, vec } from "excalibur"
+import { Actor, CollisionType, Color, Engine, Font, FontUnit, Label, Loader, Sound, vec } from "excalibur"
 
 // 1 - Criar uma instância de Engine, que representa o jogo
 
@@ -117,7 +117,21 @@ listaBlocos.forEach(bloco => {
 //Adicionando pontuação
 let pontos = 0
 
-const textoPontos = new Text({
+// label = text + actor
+const textoPontos = new Label({
+	text: pontos.toString(),
+	font: new Font({
+		size: 40,
+		color: Color.White,
+		strokeColor: Color.Black,
+		unit: FontUnit.Px
+	}),
+	pos: vec(600, 500)
+})
+
+game.add(textoPontos)
+
+/* const textoPontos = new Text({
 	text: "Hello Worlds",
 	font: new Font({size:20})
 })
@@ -129,7 +143,12 @@ const objetoTexto = new Actor({
 
 objetoTexto.graphics.use(textoPontos)
 
-game.add(objetoTexto)
+game.add(objetoTexto) */
+
+const batida = new Sound('sound/Block Break 1.wav');
+const loader = new Loader([batida]);
+
+
 
 let colidindo: boolean = false
 
@@ -138,7 +157,16 @@ bolinha.on("collisionstart", (event) => {
 
 	// Se o elemento colidido for um bloco da lita de blocos (destrutíveis)
 	if(listaBlocos.includes(event.other)) {
+		//Destroi o bloco colidido
 		event.other.kill()
+		
+		//Adiciona um ponto
+		pontos++
+
+		//Atualiza valor do placar
+		textoPontos.text = pontos.toString()
+
+		batida.play(1);
 	}
 
 	// Rebater a bolinha - Inverter as direções
@@ -168,12 +196,17 @@ bolinha.on("collisionstart", (event) => {
 
 bolinha.on("collisionend", () => {
 	colidindo = false
+
+	if(pontos == linhas * colunas) {
+		alert("Venceu")
+		window.location.reload()
+	}
 })
 
 bolinha.on("exitviewport", () => {
 	alert("E morreu")
 	window.location.reload()
 })
-
+await game.start(loader);
 // Inicia o game
 game.start()
