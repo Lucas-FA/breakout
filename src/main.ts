@@ -190,7 +190,7 @@ bolinha.on("collisionstart", (event) => {
 		pontos++
 
 		//Mudar a cor da bolinha
-		//bolinha.color = coresBolinha[Math.trunc(Math.random() * numeroCores)]
+		bolinha.color = coresBolinha[Math.trunc(Math.random() * numeroCores)]
 		//Math.random -> retorna número de 0 a 1; 0 - 1 * numeroCores -> 10
 		//0.5 * 10 = 5
 		//0.3 * 10 = 3
@@ -199,7 +199,7 @@ bolinha.on("collisionstart", (event) => {
 		//Math.trunc() -> retorna somente a porção inteira de um número
 
 		//Mudar a cor da bolinha com a cor do bloco colidido
-		bolinha.color = event.other.color
+		//bolinha.color = event.other.color
 
 		//Atualiza valor do placar
 		textoPontos.text = pontos.toString()
