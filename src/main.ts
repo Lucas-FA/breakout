@@ -37,6 +37,28 @@ const bolinha = new Actor({
 
 bolinha.body.collisionType = CollisionType.Passive
 
+let coresBolinha = [
+	/* Color.Black,
+	Color.Chartreuse,
+	Color.Cyan,
+	Color.Green,
+	Color.Magenta,
+	Color.Orange,
+	Color.Red,
+	Color.Rose,
+	Color.White,
+	Color.Yellow */
+	Color.Red,
+	Color.Orange,
+	Color.Yellow,
+	Color.Green,
+	Color.Cyan,
+	Color.Blue,
+	Color.Violet
+]
+
+let numeroCores = coresBolinha.length
+
 // 5 - Criar movimentação da bolinha
 const velocidadeBolinha = vec(100, 100)
 
@@ -131,6 +153,12 @@ const textoPontos = new Label({
 
 game.add(textoPontos)
 
+// Porde colocar mais sons em diferentes formatos, caso o navegador não reconhaça o primeiro som, ele tenta tocar o segundo
+// ./ = pasta atual
+const batida = new Sound("./src/sound/Block Break 1.wav");
+const gameOverSound = new Sound("./src/sound/273807-Wrong-Answer-Game-Over-2.wav")
+const loader = new Loader([batida]);
+
 /* const textoPontos = new Text({
 	text: "Hello Worlds",
 	font: new Font({size:20})
@@ -145,11 +173,6 @@ objetoTexto.graphics.use(textoPontos)
 
 game.add(objetoTexto) */
 
-const batida = new Sound('sound/Block Break 1.wav');
-const loader = new Loader([batida]);
-
-
-
 let colidindo: boolean = false
 
 bolinha.on("collisionstart", (event) => {
@@ -159,14 +182,27 @@ bolinha.on("collisionstart", (event) => {
 	if(listaBlocos.includes(event.other)) {
 		//Destroi o bloco colidido
 		event.other.kill()
+
+		//Executar som
+		batida.play()
 		
 		//Adiciona um ponto
 		pontos++
 
+		//Mudar a cor da bolinha
+		//bolinha.color = coresBolinha[Math.trunc(Math.random() * numeroCores)]
+		//Math.random -> retorna número de 0 a 1; 0 - 1 * numeroCores -> 10
+		//0.5 * 10 = 5
+		//0.3 * 10 = 3
+		//0.873 * 10 = 8.73
+
+		//Math.trunc() -> retorna somente a porção inteira de um número
+
+		//Mudar a cor da bolinha com a cor do bloco colidido
+		bolinha.color = event.other.color
+
 		//Atualiza valor do placar
 		textoPontos.text = pontos.toString()
-
-		batida.play(1);
 	}
 
 	// Rebater a bolinha - Inverter as direções
@@ -204,9 +240,13 @@ bolinha.on("collisionend", () => {
 })
 
 bolinha.on("exitviewport", () => {
-	alert("E morreu")
-	window.location.reload()
+	//Executar som de game over
+	gameOverSound.play()
+	.then(() => {
+		alert("E morreu")
+		window.location.reload()
+	})
 })
-await game.start(loader);
+
 // Inicia o game
-game.start()
+await game.start(loader)
